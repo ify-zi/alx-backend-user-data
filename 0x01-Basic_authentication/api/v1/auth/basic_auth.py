@@ -41,14 +41,11 @@ class BasicAuth(Auth):
                                  decoded_base64_authorization_header:
                                  str) -> (str, str):
         """ Credential Extraction method"""
-        if decoded_base64_authorization_header is not None:
-            if isinstance(decoded_base64_authorization_header, str):
-                s_point = decoded_base64_authorization_header.find(':')
-                if s_point > 0:
-                    username = decoded_base64_authorization_header[:s_point]
-                    cred = decoded_base64_authorization_header[s_point + 1:]
-                    return (username, cred)
-        return (None, None)
+        h = decoded_base64_authorization_header
+        if h is None or not isinstance(h, str) or ":" not in h:
+            return None, None
+        credentials = h.split(":", 1)
+        return credentials[0], credentials[1]
 
     def user_object_from_credentials(self, user_email: str,
                                      user_pwd: str) -> TypeVar('User'):
