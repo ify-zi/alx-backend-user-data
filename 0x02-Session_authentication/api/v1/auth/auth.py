@@ -3,6 +3,7 @@
     Authentication model module
 """
 
+import os
 from flask import request
 from typing import TypeVar, List
 
@@ -37,3 +38,10 @@ class Auth:
     def current_user(self, request=None) -> TypeVar('User'):
         """ Method definition"""
         return None
+
+    def session_cookie(self, request=None):
+        """method definition"""
+        if request is None:
+            return None
+        _my_session_id = os.getenv('SESSION_NAME')
+        return request.cookies.get(_my_session_id)
