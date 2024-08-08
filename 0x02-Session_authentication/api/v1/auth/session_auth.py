@@ -40,11 +40,11 @@ class SessionAuth(Auth):
         """method to destroy session"""
         if request is None:
             return False
-        session_id = self.session_cookie(request)
-        if session_id is not None:
-            u_id = self.user_id_for_session_id(session_id)
-            if u_id is not None:
-                self.user_id_by_session_id.pop(u_id)
-                return True
+        session_cookie = self.session_cookie(request)
+        if session_cookie is None:
             return False
-        return False
+        user_id = self.user_id_for_session_id(session_cookie)
+        if user_id is None:
+            return False
+        del self.user_id_by_session_id[session_cookie]
+        return True
