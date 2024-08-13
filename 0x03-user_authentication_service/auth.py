@@ -16,6 +16,10 @@ def _hash_password(password: str) -> bytes:
     hashed = bcrypt.hashpw(pwd, bcrypt.gensalt())
     return hashed
 
+def _generate_uuid() -> str:
+        """genrate a string repr of the id"""
+        return str(uuid.uuid4())
+
 
 class Auth:
     """Auth class to interact with the authentication database.
@@ -48,16 +52,12 @@ class Auth:
         else:
             return False
 
-    def _generate_uuid(self) -> str:
-        """genrate a string repr of the id"""
-        return str(uuid.uuid4())
-
     def create_session(self, email: str) -> str:
         """creates user session"""
         try:
             user = self._db.find_user_by(email=email)
             if user:
-                user.session_id = self._generate_uuid()
+                user.session_id = _generate_uuid()
                 self._db._session.commit()
         except NoResultFound:
             return None
