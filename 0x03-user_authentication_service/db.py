@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""DB module
+"""DB module.
 """
 from sqlalchemy import create_engine, tuple_
 from sqlalchemy.exc import InvalidRequestError
@@ -12,20 +12,20 @@ from user import Base, User
 
 
 class DB:
-    """DB class
+    """DB class.
     """
 
     def __init__(self) -> None:
-        """Initialize a new DB instance
+        """Initialize a new DB instance.
         """
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
 
     @property
     def _session(self) -> Session:
-        """Memoized session object
+        """Memoized session object.
         """
         if self.__session is None:
             DBSession = sessionmaker(bind=self._engine)
@@ -33,26 +33,33 @@ class DB:
         return self.__session
 
     def add_user(self, email: str, hashed_password: str) -> User:
-        """adds user to database"""
-        user = User(email=email, hashed_password=hashed_password)
-        self._session.add(user)
-        self._session.commit()
-        return user
+        """Adds a new user to the database.
+        """
+        try:
+            new_user = User(email=email, hashed_password=hashed_password)
+            self._session.add(new_user)
+            self._session.commit()
+        except Exception:
+            self._session.rollback()
+            new_user = None
+        return new_user
 
     def find_user_by(self, **kwargs) -> User:
-        """ method to retive user obect"""
+        """Finds a user based on a set of filters.
+        """
         fields, values = [], []
         for key, value in kwargs.items():
             if hasattr(User, key):
                 fields.append(getattr(User, key))
                 values.append(value)
             else:
-                raise InvalidRequestError
-        res = self._session.query(User).filter(
-                tuple_(*fields).in_([tuple(values)])).first()
-        if res is None:
+                raise InvalidRequestError()
+        result = self._session.query(User).filter(
+            tuple_(*fields).in_([tuple(values)])
+        ).first()
+        if result is None:
             raise NoResultFound()
-        return res
+        return result
 
     def update_user(self, user_id: int, **kwargs) -> None:
         """Updates a user based on a given id.
