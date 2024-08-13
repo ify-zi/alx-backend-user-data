@@ -40,9 +40,9 @@ class Auth:
         """credential validation method"""
         try:
             user = self._db.find_user_by(email=email)
-        except Exception:
+        except NoResultFound:
             pass
-        if bcrypt.checkpw(password, user.hash_password):
+        if bcrypt.checkpw(password, user.hashed_password):
             return True
         else:
             return False
