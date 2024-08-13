@@ -16,9 +16,10 @@ def _hash_password(password: str) -> bytes:
     hashed = bcrypt.hashpw(pwd, bcrypt.gensalt())
     return hashed
 
+
 def _generate_uuid() -> str:
-        """genrate a string repr of the id"""
-        return str(uuid.uuid4())
+    """genrate a string repr of the id"""
+    return str(uuid.uuid4())
 
 
 class Auth:
