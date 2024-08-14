@@ -48,8 +48,7 @@ def login_ses():
 @app.route("/sessions", methods=['DELETE'], strict_slashes=False)
 def logout():
     """loging out adn session destruction"""
-    cookie_dict = request.headers.get('Set-Cookie')
-    session_id = cookie_dict.get('session_id')
+    session_id = request.cookies.get("session_id")
     user = Auth.get_user_from_session_id(session_id)
     if user is None:
         abort(403)
