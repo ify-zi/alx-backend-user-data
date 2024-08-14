@@ -3,7 +3,7 @@
     Flask module, API declaration
 """
 
-from flask import Flask, jsonify, request, abort
+from flask import Flask, jsonify, request, abort, redirect, url_for
 from auth import Auth
 
 
@@ -43,6 +43,19 @@ def login_ses():
         return resp
     else:
         abort(401)
+
+
+@app.route("/sessions", methods=['DELETE'], strict_slashes=False)
+def logout():
+    """loging out adn session destruction"""
+    cookie_dict = request.headers.get('Set-Cookie')
+    session_id = cookie_dict.get('session_id')
+    user = Auth.get_user_from_session_id(session_id)
+    if user is None:
+        abort(403)
+    Auth.destory_session(user.id)
+    redirect(url_for('home'))
+
 
 
 if __name__ == "__main__":
