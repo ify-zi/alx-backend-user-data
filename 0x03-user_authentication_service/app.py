@@ -31,7 +31,7 @@ def login():
 
 
 @app.route("/sessions", methods=['POST'], strict_slashes=False)
-def login_ses():
+def login_ses() -> str:
     """login api for sesssion"""
     email = request.form.get('email')
     password = request.form.get('password')
@@ -45,8 +45,8 @@ def login_ses():
         abort(401)
 
 
-@app.route("/sessions", methods=['DELETE'], strict_slashes=False)
-def logout():
+@app.route("/sessions", methods=["DELETE"], strict_slashes=False)
+def logout() -> str:
     """loging out adn session destruction"""
     session_id = request.cookies.get("session_id")
     user = AUTH.get_user_from_session_id(session_id)
