@@ -88,7 +88,5 @@ class Auth:
                 reset_token = str(uuid.uuid4())
                 self._db.update_self(user.id, reset_token=reset_token)
                 return reset_token
-            else:
-                raise ValueError
         except Exception:
-            pass
+            raise ValueError
